@@ -4,68 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Map of the Sleep</title>
-  <meta name="description" content="Where We Leave Ourselves: the paper prototype played on screen, v2. The fortune teller, the map of the sleep and the streets of the night, one player at a time.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  <script type="importmap">
-    { "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-    } }
-  </script>
+  <meta http-equiv="refresh" content="0; url=v2/">
+  <link rel="canonical" href="v2/">
+  <style>
+    body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0B1020;
+      color: #E9E6D2; font-family: 'Helvetica Neue', Arial, sans-serif; }
+    a { color: #FED46D; }
+    p { line-height: 1.6; text-align: center; }
+  </style>
 </head>
-<body data-board="map">
-  <div id="app">
-    <header id="top">
-      <div class="brand"><span class="t1">Where We Leave Ourselves</span><span class="t2">the paper prototype, played on screen</span></div>
-      <div id="banner"></div>
-      <div class="tools"><button id="view" class="ghost">View: street</button><button id="sound" class="ghost">Sound: off</button><button id="end" class="ghost">End the playtest</button></div>
-    </header>
-    <main>
-      <div id="stage">
-        <div id="toasts"></div>
-        <div id="hint"></div>
-        <div id="actions"></div>
-        <div id="fade"></div>
-      </div>
-      <aside id="panel"></aside>
-    </main>
-  </div>
-
-  <section id="title" class="overlay">
-    <div class="title-box">
-      <div class="eyebrow">BDI712 · paper prototype v2 · one player, the whole sleep</div>
-      <h1>The map of the sleep</h1>
-      <p class="lede">You are asleep, and you are trying to wake: reach <b>END</b>. The fortune teller gives every move, and the
-        map carries you through five chapters. On every night stone you must hide before the night is over.</p>
-      <p class="lede small">The Returner is not hunting you. It is the old, protective part of her that keeps going back to what once
-        felt safe, and it learns the ways you trust.</p>
-      <div class="names">
-        <label><span class="dot" style="background:#4FB8B3"></span><input id="p1" placeholder="Your name" maxlength="20"></label>
-      </div>
-      <div class="title-actions">
-        <button id="begin" class="primary">Begin the sleep</button>
-        <button id="resume" class="secondary hidden"></button>
-        <button id="lastrec" class="ghost hidden"></button>
-      </div>
-      <ol class="how">
-        <li><b>The fortune teller.</b> Say a word, pick a number, lift its flap: how far you move, and a question.</li>
-        <li><b>The map.</b> Gold rings lift you ahead, red rings send you back. You must stop on every ★ night stone.</li>
-        <li><b>The streets.</b> Four turns to reach a refuge. The streets you know are lit and quick; new ones are dark and slow.
-          From the second night, the Returner walks the streets you know.</li>
-      </ol>
-      <p class="muted small-note">One player plays the whole game. The next player starts a new game after the questions.
-        v1, for two players, is at <a href="v1/">v1/</a>.</p>
-      <p class="credit">Places from the game's own renders. Think aloud while you play.</p>
-    </div>
-  </section>
-
-  <section id="teller" class="overlay hidden" aria-live="polite"></section>
-  <section id="card" class="overlay hidden"></section>
-  <section id="after" class="overlay hidden"></section>
-
-  <script type="module" src="js/main.js"></script>
+<body>
+  <p>The map of the sleep has moved to <a href="v2/">v2</a>.<br>The first version, for two players, is at <a href="v1/">v1</a>.</p>
+  <script>location.replace('v2/' + location.search + location.hash);</script>
 </body>
 </html>

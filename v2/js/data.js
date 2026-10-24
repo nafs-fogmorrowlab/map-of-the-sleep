@@ -596,15 +596,15 @@ export const TELLER = {
 // The pictures: WWLO's own renders (Desktop/WWLO Best screenshots; chapter III is the Maze, Lake and Lane render,
 // graded to night). Swap any file in img/ to change a place.
 export const IMAGES = {
-  title: 'img/title.jpg',
-  chapters: { I: 'img/ch1.jpg', II: 'img/ch2.jpg', III: 'img/ch3.jpg', IV: 'img/ch4.jpg', V: 'img/ch5.jpg' },
+  title: '../img/title.jpg',
+  chapters: { I: '../img/ch1.jpg', II: '../img/ch2.jpg', III: '../img/ch3.jpg', IV: '../img/ch4.jpg', V: '../img/ch5.jpg' },
   nights: {
-    'the town at night': 'img/night_town_night.jpg',
-    'the town in the storm': 'img/night_town_storm.jpg',
-    'Dhaka in winter fog': 'img/night_dhaka_fog.jpg',
-    'Dhaka, a hundred years later': 'img/night_dhaka_100.jpg',
+    'the town at night': '../img/night_town_night.jpg',
+    'the town in the storm': '../img/night_town_storm.jpg',
+    'Dhaka in winter fog': '../img/night_dhaka_fog.jpg',
+    'Dhaka, a hundred years later': '../img/night_dhaka_100.jpg',
   },
-  refuges: { A: 'img/refuge_A.jpg', B: 'img/refuge_B.jpg', C: 'img/refuge_C.jpg' },
+  refuges: { A: '../img/refuge_A.jpg', B: '../img/refuge_B.jpg', C: '../img/refuge_C.jpg' },
 };
 
 // After play, as on the printed turn logs (L1-L6, Q1-Q7, kept so v1 and v2 compare), with one statement and one

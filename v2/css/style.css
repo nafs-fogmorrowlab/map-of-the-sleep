@@ -101,7 +101,7 @@ button:disabled { cursor: default; }
 
 /* overlays */
 .overlay { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; background: rgba(4, 6, 13, 0.72); backdrop-filter: blur(3px); }
-#title { background: linear-gradient(180deg, rgba(5, 8, 16, 0.5), rgba(5, 8, 16, 0.9) 72%), url('../img/title.jpg') center / cover; backdrop-filter: none; }
+#title { background: linear-gradient(180deg, rgba(5, 8, 16, 0.5), rgba(5, 8, 16, 0.9) 72%), url('../../img/title.jpg') center / cover; backdrop-filter: none; }
 .title-box { width: min(720px, 92vw); padding: 28px; }
 .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sea); margin-bottom: 8px; }
 .title-box h1 { font-family: var(--serif); font-size: clamp(44px, 7vw, 72px); font-weight: 600; margin: 0 0 10px; color: var(--beige); line-height: 1; }
