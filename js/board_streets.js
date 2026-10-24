@@ -1,10 +1,12 @@
 // The streets of the night in 3D: a night town of lit blocks around the printed street graph, the three refuges
-// (WWLO renders standing behind their gates), the Returner standing on a watched gate, and her piece. Junctions are
-// chosen by clicking them.
+// (WWLO renders standing behind their gates), the Returner, and her piece. Junctions are chosen by clicking them.
+// v2: the streets she knows glow warm and the ones she doesn't are dark; the Returner walks her lit streets and shows
+// where it will step next; a street-level view follows her piece.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { STREETS, IMAGES } from './data.js';
+import { edgeKey } from './rules.js';
 import { C, PLAYER_COLOURS, tween, ease, lerp, rng, groundTexture, windowsTexture, glowTexture, pawn, labelEl, stoneFace } from './fx.js';
 
 const S = 0.1;
@@ -57,20 +59,32 @@ export class StreetsBoard {
     const segs = STREETS.streets.map(([a, b]) => [J[a], J[b]]);
     for (const [k, r] of Object.entries(STREETS.refuges)) segs.push([J[r.gate], refugeBase(k)]);
 
-    // streets: asphalt with a dashed middle
-    const road = new THREE.MeshStandardMaterial({ color: '#2B3244', roughness: 0.75, metalness: 0.05 });
+    // streets: asphalt with a dashed middle; lit (known) or dark (unknown), set per night
+    this.mats = {
+      litRoad: new THREE.MeshStandardMaterial({ color: '#4a4030', emissive: '#ffb860', emissiveIntensity: 0.22, roughness: 0.7 }),
+      darkRoad: new THREE.MeshStandardMaterial({ color: '#141822', roughness: 0.9 }),
+      litDash: new THREE.MeshBasicMaterial({ color: '#ffd59a' }),
+      darkDash: new THREE.MeshBasicMaterial({ color: '#39404f' }),
+      plainRoad: new THREE.MeshStandardMaterial({ color: '#2B3244', roughness: 0.75, metalness: 0.05 }),
+    };
+    this.edges = {};
     const dashMat = new THREE.MeshBasicMaterial({ color: C.beige });
-    for (const [a, b] of segs) {
+    const keys = STREETS.streets.map(([a, b]) => edgeKey(a, b));
+    segs.forEach(([a, b], i) => {
+      const key = keys[i] || null;
       const pa = W(a, 0.02), pb = W(b, 0.02), len = pa.distanceTo(pb), mid = pa.clone().add(pb).multiplyScalar(0.5);
       const ang = Math.atan2(-(pb.z - pa.z), pb.x - pa.x);
-      const m = new THREE.Mesh(new THREE.BoxGeometry(len, 0.04, 0.62), road);
+      const m = new THREE.Mesh(new THREE.BoxGeometry(len, 0.04, 0.62), key ? this.mats.darkRoad : this.mats.plainRoad);
       m.position.copy(mid); m.rotation.y = ang; m.receiveShadow = true; sc.add(m);
+      const dashes = [];
       const n = Math.floor(len / 0.36);
-      for (let i = 1; i < n; i++) {
-        const d = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.012, 0.045), dashMat);
-        d.position.copy(pa.clone().lerp(pb, i / n)).setY(0.05); d.rotation.y = ang; sc.add(d);
+      for (let k = 1; k < n; k++) {
+        const d = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.012, 0.045), key ? this.mats.darkDash : dashMat);
+        d.position.copy(pa.clone().lerp(pb, k / n)).setY(0.05); d.rotation.y = ang; sc.add(d);
+        dashes.push(d);
       }
-    }
+      if (key) this.edges[key] = { road: m, dashes };
+    });
 
     // the night town: blocks of lit windows, kept off the streets and the refuges
     const r = rng(23);
@@ -107,6 +121,8 @@ export class StreetsBoard {
     const nodeMat = new THREE.MeshStandardMaterial({ color: '#EFE9CF', roughness: 0.5 });
     const startMat = new THREE.MeshStandardMaterial({ color: C.hawkbit, metalness: 0.35, roughness: 0.35, emissive: '#5a3a00', emissiveIntensity: 0.5 });
     const gateMat = new THREE.MeshStandardMaterial({ color: '#C97880', metalness: 0.85, roughness: 0.3, emissive: '#2a0a0e', emissiveIntensity: 0.5 });
+    this.haloLit = glowTexture('254,212,109');
+    this.haloDark = glowTexture('170,200,255');
     const hitGeo = new THREE.CylinderGeometry(0.75, 0.75, 0.6, 20);
     const hitMat = new THREE.MeshBasicMaterial({ visible: false });
     for (const [k, p] of Object.entries(J)) {
@@ -137,6 +153,25 @@ export class StreetsBoard {
       sc.add(g);
       this.nodes[k] = g;
     }
+
+    // the cost tag over a junction she can step to, and the glow where the Returner will step next
+    this.tags = {};
+    for (const k of Object.keys(J)) {
+      const t = new CSS2DObject(labelEl('', 'cost'));
+      t.position.set(0, 1.2, 0); t.visible = false;
+      this.nodes[k].add(t);
+      this.tags[k] = t;
+    }
+    this.nextMark = new THREE.Group();
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.07, 12, 48), new THREE.MeshBasicMaterial({ color: '#ff6b74', transparent: true, opacity: 0.9 }));
+    ring.rotation.x = -Math.PI / 2; ring.position.y = 0.2;
+    const redGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture('255,107,116'), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.8 }));
+    redGlow.scale.set(2.4, 2.4, 1); redGlow.position.y = 0.3;
+    const nextTag = new CSS2DObject(labelEl('its next step', 'next'));
+    nextTag.position.set(0, 0.9, 0.9);
+    this.nextMark.add(ring, redGlow, nextTag);
+    this.nextMark.visible = false;
+    sc.add(this.nextMark);
 
     // the refuges: renders standing behind their gates, lit warm
     const loader = new THREE.TextureLoader();
@@ -205,10 +240,19 @@ export class StreetsBoard {
     });
   }
 
-  /** Lights the junctions she can step to, and resolves with the one clicked. */
-  choose(nodes) {
+  /** Lights the junctions she can step to (with what each costs), and resolves with the one clicked. */
+  choose(options) {
+    const nodes = options.map((o) => (typeof o === 'string' ? o : o.node));
     this.pickable = nodes;
     this.pulseNodes = nodes;
+    for (const o of options) {
+      if (typeof o === 'string') continue;
+      const t = this.tags[o.node];
+      t.element.className = 'tag cost ' + (o.lit ? 'lit' : 'dark');
+      t.element.innerHTML = o.lit ? 'lit · 1 step' : 'dark · 3 steps';
+      t.visible = true;
+      this.nodes[o.node].userData.halo.material.map = o.lit ? this.haloLit : this.haloDark;
+    }
     return new Promise((resolve) => {
       this.onPick = (n) => { this.clearChoice(); resolve(n); };
       this.cancelChoice = () => { this.clearChoice(); resolve(null); };
@@ -218,6 +262,37 @@ export class StreetsBoard {
   clearChoice() {
     this.pickable = []; this.pulseNodes = []; this.onPick = null;
     for (const g of Object.values(this.nodes)) g.userData.halo.material.opacity = 0;
+    for (const t of Object.values(this.tags)) t.visible = false;
+  }
+
+  /** The streets she knows glow; the rest are dark. */
+  setLit(lit) {
+    for (const [k, e] of Object.entries(this.edges)) {
+      const on = lit.has(k);
+      e.road.material = on ? this.mats.litRoad : this.mats.darkRoad;
+      for (const d of e.dashes) d.material = on ? this.mats.litDash : this.mats.darkDash;
+    }
+  }
+
+  showNext(node) {
+    this.nextMark.visible = !!node;
+    if (node) this.nextMark.position.copy(W(STREETS.junctions[node], 0.02));
+  }
+
+  async walkReturner(node) {
+    const r = this.returner, a = r.position.clone(), b = W(STREETS.junctions[node], 0.1);
+    if (a.distanceTo(b) < 0.01) return;
+    r.lookAt(b.x, r.position.y, b.z);
+    await tween(700, (u) => { const e = ease(u); r.position.lerpVectors(a, b, e); r.position.y = 0.1 + Math.abs(Math.sin(u * Math.PI * 2)) * 0.06; });
+    r.position.copy(b);
+    this.returnerAt = node;
+  }
+
+  /** 'over' looks down on the whole night; 'street' follows her piece at street level. */
+  setView(mode) {
+    this.view = mode;
+    this.controls.enabled = mode === 'over';
+    if (mode === 'over') { this.camera.position.copy(this.controls.target).addScaledVector(this.homeDir, this.overDist || this.homeDist); }
   }
 
   setup(colour, watchedGates) {
@@ -228,6 +303,8 @@ export class StreetsBoard {
     this.scene.add(this.token);
     this.at = 'S';
     this.returner.visible = false;
+    this.returnerAt = null;
+    this.showNext(null);
     this.watchedGates = watchedGates;
     this.setDarkness(0);
     this.controls.target.set(0, 0, 0.4);
@@ -239,6 +316,8 @@ export class StreetsBoard {
     const r = this.returner;
     const p = W(STREETS.junctions[gate], 0.1);
     r.position.copy(p);
+    r.rotation.set(0, 0, 0);
+    this.returnerAt = gate;
     r.visible = true;
     r.scale.set(1.3, 0.02, 1.3);
     this.follow = p;
@@ -283,6 +362,7 @@ export class StreetsBoard {
     if (!this.homeDir) { this.homeDir = this.camera.position.clone().sub(this.controls.target); this.homeDist = this.homeDir.length(); this.homeDir.normalize(); }
     const tanH = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * this.camera.aspect;
     const d = Math.max(this.homeDist, 13.5 / tanH);
+    this.overDist = d;
     this.camera.position.copy(this.controls.target).addScaledVector(this.homeDir, d);
   }
 
@@ -291,8 +371,15 @@ export class StreetsBoard {
       const o = 0.45 + 0.4 * Math.sin(now / 220);
       for (const k of this.pulseNodes) this.nodes[k].userData.halo.material.opacity = o;
     }
-    if (this.follow) this.controls.target.lerp(new THREE.Vector3(this.follow.x * 0.25, 0, this.follow.z * 0.25 + 0.4), 0.05);
-    this.controls.update();
+    if (this.view === 'street' && this.token) {
+      const p = this.token.position;
+      this.camera.position.lerp(new THREE.Vector3(p.x * 0.85, 5.2, p.z + 6.4), 0.06);
+      this.lookAt = (this.lookAt || new THREE.Vector3()).lerp(new THREE.Vector3(p.x * 0.7, 0.4, p.z - 5.5), 0.06);
+      this.camera.lookAt(this.lookAt);
+    } else {
+      if (this.follow) this.controls.target.lerp(new THREE.Vector3(this.follow.x * 0.25, 0, this.follow.z * 0.25 + 0.4), 0.05);
+      this.controls.update();
+    }
     this.renderer.render(this.scene, this.camera);
     this.labels.render(this.scene, this.camera);
   }

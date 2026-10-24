@@ -607,14 +607,16 @@ export const IMAGES = {
   refuges: { A: 'img/refuge_A.jpg', B: 'img/refuge_B.jpg', C: 'img/refuge_C.jpg' },
 };
 
-// After play, as on the printed turn logs
+// After play, as on the printed turn logs (L1-L6, Q1-Q7, kept so v1 and v2 compare), with one statement and one
+// question added in v2 for its lit and dark streets
 export const STATEMENTS = [
  "The Returner seemed to learn where I hid.",
  "I could see the danger before the night started.",
  "Choosing a different refuge made a difference.",
  "I wanted to go back to the refuge that had worked before.",
  "Meeting the Returner felt like another try, not a “game over”.",
- "I understood how the fortune teller, the map and the streets fed each other."
+ "I understood how the fortune teller, the map and the streets fed each other.",
+ "The lit streets pulled me back the same way."
 ];
 export const QUESTIONS = [
  "What was the Returner doing? How did it choose its gate?",
@@ -623,5 +625,6 @@ export const QUESTIONS = [
  "Did the questions under the flaps change what you picked?",
  "What was confusing?",
  "What would make it fairer, or more frightening?",
- "(after explaining) Does a Returner that learns where you hide feel fair?"
+ "(after explaining) Does a Returner that learns where you hide feel fair?",
+ "What did the lit and dark streets make you do?"
 ];

@@ -187,3 +187,28 @@ body:not(.playing) #top .tools #end { display: none; }
   .card-img { min-height: 200px; }
   .brand .t2 { display: none; }
 }
+
+/* v2 */
+#view { display: none; }
+body.night #view { display: inline-block; }
+.lede.small { font-size: 15px; color: #bfc3cf; }
+.small-note { font-size: 12px; margin-top: 14px; }
+.small-note a { color: var(--sea); }
+.chain { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin: 0 0 4px; font-size: 12px; }
+.chain .link { border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; color: var(--muted); }
+.chain .link.now { border-color: var(--hawkbit); background: rgba(254, 212, 109, 0.1); color: var(--hawkbit); font-weight: 600; }
+.chain i { color: var(--muted); font-style: normal; font-size: 11px; }
+.chain-cap { font-size: 12px; color: var(--pale-gold); margin: 0 0 12px; }
+.goal { font-size: 13px; color: #cfd3dc; margin: 0 0 10px; }
+.asks { border-left: 3px solid var(--lilac, #B6A4D8); background: rgba(182, 164, 216, 0.08); padding: 8px 12px; border-radius: 0 10px 10px 0; margin: 10px 0; }
+.asks span { display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #B6A4D8; }
+.asks i { font-family: var(--serif); font-size: 18px; color: var(--beige); }
+.because { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: rgba(179, 220, 214, 0.08); border: 1px solid rgba(179, 220, 214, 0.3); font-size: 14px; line-height: 1.45; }
+.nways { font-family: var(--sans); font-size: 12px; color: #5d5440; margin-top: 4px; }
+.lg.litst { border-radius: 4px; height: 8px; margin-top: 6px; background: #ffb860; box-shadow: 0 0 10px rgba(255, 184, 96, 0.7); }
+.lg.darkst { border-radius: 4px; height: 8px; margin-top: 6px; background: #1d2230; border: 1px solid #3a4152; }
+.lg.ret { background: #17151d; border: 3px solid #ff6b74; }
+.tag.cost { font-size: 11px; padding: 2px 8px; }
+.tag.cost.lit { border-color: #ffb860; color: #ffd59a; }
+.tag.cost.dark { border-color: #93AEBF; color: #c9d6e6; }
+.tag.next { border-color: #ff6b74; color: #ff9ca2; font-size: 11px; }
