@@ -1,62 +1,37 @@
-# The map of the sleep (web version, v2)
+# The map of the sleep (web version)
 
-The paper prototype of *Where We Leave Ourselves*, played on screen by **one player, from START to END**. The next player
-starts a new game. Why it changed from v1 is in `Docs/BDI712/A1_iteration_notes.md` in the WWLO repo.
+The paper prototype of *Where We Leave Ourselves*, played on screen: the fortune teller, the map of the sleep and the
+streets of the night, for two players taking turns on one screen. It is live at
+https://nafs-fogmorrowlab.github.io/map-of-the-sleep/v1/ (the main address forwards there).
 
-- **v2:** https://nafs-fogmorrowlab.github.io/map-of-the-sleep/v2/ (folder `v2/`). The main address forwards here.
-- **v1**, two players taking turns: https://nafs-fogmorrowlab.github.io/map-of-the-sleep/v1/ (folder `v1/`).
-- Both read the pictures from `img/`.
+A v2 (one player, lit and dark streets, a Returner that walked the player's streets) was built on 23 October 2026,
+froze during play, and was discarded. It is still in this repository's history (commits c3739d7 and 7d05ec1). What comes
+next is in the revision plan, `Docs/BDI712/A1_Revision_Plan.pdf` in the WWLO repo.
+
+## v1
 
 1. **The fortune teller** gives every move. Say a word, pick one of the four numbers it opens onto, and lift its flap:
-   how far you move, and a question in your own head. The question stays in view in the side panel.
-2. **The map of the sleep** carries you through five chapters to END, where you wake.
+   how far you move, and a question in your own head.
+2. **The map of the sleep** carries you through five chapters.
    - A ★ night stone (moon, silver ring) stops you, even with moves left, and starts a night.
    - A gold ring is a way up: you jump ahead to the stone number on its label.
    - A red ring is a way back: you go back to the stone number on its label, the same chapter met more simply.
 3. **The streets of the night**: four turns to reach a refuge.
-   - Streets you have walked are **lit** and cost 1 step; new streets are **dark** and cost 3. The three streets out of
-     START are lit from the first night.
-   - **From the second night the Returner is out.** It starts at the gate of the refuge you hid in most (the
-     notebook's circles), and after each of your moves it walks one junction along your lit streets toward you. A red
-     ring shows its next step.
-   - Walking onto it, or ending your move where it steps next, means you meet it, and the night ends. Any gate it
-     isn't standing on is safe. After 4 turns you wake in the street.
+   - Each player has their own Returner's notebook. It fills a circle where you hid and rubs one out everywhere else.
+   - A refuge with 2 or 3 circles is watched, and the Returner stands on its gate.
    - How the night ends moves you on the map: safe moves you on 1 stone; meeting the Returner sends you back to the
      chapter's first stone, at most twice; waking in the street keeps you where you are.
 
-Every choice is a click; the page moves the pieces. **View: street / overhead** switches the camera on the streets.
-Every turn and every night is recorded. At the end come the after-play statements and questions (v1's, plus L7 and Q8),
-and **Save answers and download the record** gives one .zip: the JSON and three CSVs (nights, map turns, after play).
-A game in progress is kept in the browser, so a refresh can resume it. The title screen can download the last
-player's record again.
+Every choice is a click; the page moves the pieces. Every turn and every night is recorded. At the end come the
+after-play statements and questions from the printed turn logs, and **Save answers and download the record** gives one
+.zip: the JSON and three CSVs (nights, map turns, after play). The title screen can download the last playtest's record
+again.
 
-## Hosting on GitHub Pages
+## Hosting and trying it locally
 
-1. Make a new repository, for example `map-of-the-sleep`.
-2. Put the contents of this folder at its root: `index.html` (it forwards to `v2/`), `v1/`, `v2/`, `img/` and this README.
-3. In the repository: **Settings → Pages → Build and deployment → Deploy from a branch**, branch `main`, folder `/ (root)`.
-4. After a minute it is live at `https://<your-user>.github.io/map-of-the-sleep/v2/`.
+GitHub Pages serves this repository's root (Settings → Pages → Deploy from a branch, `main`, `/ (root)`). The page loads
+three.js (0.160.0) from jsDelivr and the fonts from Google Fonts, so it needs an internet connection. To try it locally,
+serve the folder (`python3 -m http.server 8000`) and open http://localhost:8000/v1/.
 
-The page loads three.js (0.160.0) from jsDelivr and the fonts from Google Fonts, so it needs an internet connection.
-
-## Trying it locally
-
-ES modules don't load from `file://`, so serve the folder:
-
-```
-cd interactive
-python3 -m http.server 8000
-```
-
-Then open http://localhost:8000/v2/.
-
-## Changing things
-
-- **Pictures:** `img/` holds WWLO's own renders, listed in `IMAGES` in `v2/js/data.js` (and `v1/js/data.js`): the five chapters, the four nights
-  and the three refuges. Chapter III is the Maze, Lake and Lane render graded to night, because there is no game-lit
-  render of it yet. Replace a file, keeping its name, to change a place.
-- **Rules and wording:** `v2/js/data.js` holds the stones, rings, streets, the teller's moves and its questions, taken
-  from `Tools/bdi712/build_layers.py` and `build_fortune.py`. `v2/js/rules.js` holds the rules, with the v2 numbers at
-  the top (`DARK_COST`, `HOME_LIT`, `NIGHT_TURNS`). `cd v2 && node test_rules.mjs` checks them against the printed boards.
-- **Test views** (for checking, not for players), on `v2/`: `?view=map`, `?view=teller`, `?view=flap`, `?view=card`,
-  `?view=streets`. `?auto=7` plays a whole game by itself, quickly.
+The pictures in `img/` are WWLO's own renders, listed in `IMAGES` in `v1/js/data.js`. Chapter III is the Maze, Lake and
+Lane render graded to night.
